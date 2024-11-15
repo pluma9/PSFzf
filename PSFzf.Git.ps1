@@ -203,7 +203,7 @@ function Invoke-PsFzfGitHashes() {
     $fzfArguments = Get-GitFzfArguments
     Invoke-Expression ("git $GitLogSubCommand" + " --date=short --format=""%C(green)%C(bold)%cd %C(auto)%h%d %s (%an)"" $($(Get-ColorAlways).Trim()) --graph")  | `
         Invoke-Fzf @fzfArguments -NoSort  `
-        -BorderLabel "$script:hashesString"
+        -BorderLabel "$script:hashesString" `
     -Preview "$previewCmd" | ForEach-Object {
         if ($_ -match '\d\d-\d\d-\d\d\s+([a-f0-9]+)\s+') {
             $result += $Matches.1
