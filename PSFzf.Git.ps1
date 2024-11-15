@@ -175,7 +175,19 @@ function Invoke-PsFzfGitFiles() {
 
     $result
 }
+<#
+    .PARAMETER GitLogSubCommand
+    The git log subcommand to use. Default is 'log'.
+
+    .EXAMPLE
+    Invoke-PsFzfGitHashes -GitLogSubCommand 'log -3'
+    .EXAMPLE
+    Invoke-PsFzfGitHashes -GitLogSubCommand 'log --since="2 weeks ago"'
+#>
 function Invoke-PsFzfGitHashes() {
+    param(
+        [string]$GitLogSubCommand = 'log'
+    )
     if (-not (IsInGitRepo)) {
         return
     }
@@ -189,7 +201,7 @@ function Invoke-PsFzfGitHashes() {
     $result = @()
 
     $fzfArguments = Get-GitFzfArguments
-    & git log --date=short --format="%C(green)%C(bold)%cd %C(auto)%h%d %s (%an)" $(Get-ColorAlways).Trim() --graph | `
+    Invoke-Expression ("git $GitLogSubCommand" + " --date=short --format=""%C(green)%C(bold)%cd %C(auto)%h%d %s (%an)"" $($(Get-ColorAlways).Trim()) --graph")  | `
         Invoke-Fzf @fzfArguments -NoSort  `
         -BorderLabel "$script:hashesString"
     -Preview "$previewCmd" | ForEach-Object {
